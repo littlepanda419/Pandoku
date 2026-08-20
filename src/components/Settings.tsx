@@ -31,7 +31,7 @@ const THEMES = [
   { value: "mono", color: "#64748b" },
 ];
 
-const GITHUB_URL = "https://github.com";
+const GITHUB_URL = "https://github.com/littlepanda419/Pandoku";
 
 export const Settings: React.FC<SettingsProps> = ({
   darkMode,
