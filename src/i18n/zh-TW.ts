@@ -1,0 +1,65 @@
+export default {
+  translation: {
+    app: {
+      title: "Panda Sudoku",
+      titleDaily: "Panda Sudoku(每日)",
+    },
+    stats: {
+      title: "統計資料",
+      progress: "進度",
+      time: "遊玩時間",
+      filled: "已填",
+      empty: "空白",
+      correct: "正確",
+      wrong: "錯誤",
+    },
+    difficulty: {
+      novice: "入門 (Novice)",
+      easy: "簡單 (Easy)",
+      normal: "中等 (Normal)",
+      hard: "困難 (Hard)",
+      expert: "專家 (Expert)",
+    },
+    buttons: {
+      newGame: "新遊戲",
+      hint: "💡 提示",
+      check: "對答案",
+      cancel: "取消",
+      confirm: "確定",
+      daily: "每日挑戰",
+      dailyDone: "✓ 今日已完成",
+    },
+    instructions: {
+      draft: "• 草稿數字：點擊格子後直接輸入 1-9",
+      answer: "• 答案數字：拖曳右側數字至格子；點擊格子後點擊右側數字",
+      clear: "• 清除數字：右鍵格子",
+    },
+    snackbar: {
+      noEmptyCells: "沒有可用的空格了",
+      hint: "提示：第 {{row}} 列、第 {{col}} 欄 → 填入 {{value}}",
+      notFilled: "還有 {{count}} 個格子沒填，還無法對答案喔！",
+      wrongAnswer: "有些格子填錯或存在衝突，請再檢查一下！",
+    },
+    confirm: {
+      clearCell: "確定要清除此格內容嗎？",
+      newGame: "確定要開始新遊戲嗎？目前的進度將被清除。",
+      success: "🎉 恭喜！所有格子都填對了，花費 {{time}}，完美通關！",
+    },
+    settings: {
+      autoDraft: "自動草稿",
+      language: "語言",
+      dark: "深色",
+      theme: "主題色彩",
+      themes: {
+        blue: "經典藍",
+        green: "森林綠",
+        pink: "櫻花粉",
+        yellow: "陽光黃",
+        orange: "活力橘",
+        mono: "極簡黑白",
+      },
+      version: "版本",
+      publishedDate: "發布日期",
+    },
+  },
+};

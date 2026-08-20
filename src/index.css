@@ -1,0 +1,301 @@
+@import "tailwindcss";
+
+/* Tailwind v4 dark mode: class-based strategy (toggle .dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* 讓 App 的 flex 佈局可完全控制版面，移除 Vite 範本殘留的 #root 限制 */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 自訂主題色彩 (Custom Accent Themes) — 透過 <html data-accent> 切換 */
+:root,
+[data-accent="blue"] {
+  --accent: #6366f1; /* indigo-500 */
+  --accent-strong: #4f46e5; /* indigo-600 */
+  --accent-hover: #4338ca; /* indigo-700 */
+  --accent-soft: #e0e7ff; /* indigo-100 */
+}
+[data-accent="green"] {
+  --accent: #10b981;
+  --accent-strong: #059669;
+  --accent-hover: #047857;
+  --accent-soft: #d1fae5;
+}
+[data-accent="pink"] {
+  --accent: #ec4899;
+  --accent-strong: #db2777;
+  --accent-hover: #be185d;
+  --accent-soft: #fce7f3;
+}
+[data-accent="yellow"] {
+  --accent: #facc15;
+  --accent-strong: #eab308;
+  --accent-hover: #ca8a04;
+  --accent-soft: #fef9c3;
+}
+[data-accent="orange"] {
+  --accent: #f97316;
+  --accent-strong: #ea580c;
+  --accent-hover: #c2410c;
+  --accent-soft: #ffedd5;
+}
+[data-accent="mono"] {
+  --accent: #cbd5e1; /* 淺灰（深色模式文字） */
+  --accent-strong: #334155; /* 深灰（淺色模式文字 / 按鈕底色） */
+  --accent-hover: #0f172a; /* 近黑 */
+  --accent-soft: #e2e8f0; /* 極淺灰 */
+}
+
+/* 主色調按鈕（跟隨主題色） */
+.btn-accent {
+  background-color: var(--accent-strong);
+  color: #fff;
+}
+.btn-accent:hover {
+  background-color: var(--accent-hover);
+}
+/* 黃色主題：提亮後改配深棕文字，讓「更亮」的黃底按鈕仍保有足夠對比可讀 */
+[data-accent="yellow"] .btn-accent {
+  color: #422006;
+}
+.btn-accent:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 主題色文字：參加者填入的數字、標題等 */
+.text-accent {
+  color: var(--accent-strong);
+}
+.dark .text-accent {
+  color: var(--accent);
+}
+
+/* 網格完成動畫 (Row / Column / Box Completion Flash) — 以「區域」為單位，每個 row / col / box 各一個獨立矩形疊加層，互不衝突可同時出現 */
+/* 邊框色：淺色模式用 --accent-strong（飽和色）；深色模式用 --accent（mono 為淺灰，深底更清晰） */
+:root {
+  --flash-border: var(--accent-strong);
+}
+.dark {
+  --flash-border: var(--accent);
+}
+/* 整體動畫：基準「較暗」邊框維持亮起、停留，最後整體淡出；row / col 另有較亮的光帶沿邊框滑過 */
+@keyframes region-flash {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+/* row 光帶：上 / 下兩條長邊各一段亮光，由左緣滑至右緣（被 overflow 裁切進出） */
+@keyframes region-flash-row-sweep {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+/* col 光帶：左 / 右兩條長邊各一段亮光，由上緣滑至下緣（被 overflow 裁切進出） */
+@keyframes region-flash-col-sweep {
+  0% {
+    top: -30%;
+  }
+  100% {
+    top: 100%;
+  }
+}
+/* 疊加層：百分比定位覆蓋該 row / col / box 的範圍。
+   基準邊框＝較暗（半透明）的完整外框（color-mix 降至 55%）；光帶＝較亮（不透明）的一段在框上滑過。
+   pointer-events-none 不擋格子點擊；overflow-hidden 讓光帶在邊緣被裁切進出 */
+.region-flash {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 5px
+    color-mix(in srgb, var(--flash-border) 55%, transparent);
+  animation: region-flash 1.5s ease-out 1 forwards;
+}
+/* row：上、下兩條長邊各一段較亮光帶（兩端 fade，中央不透明），由左掃至右 */
+.region-flash-row::before,
+.region-flash-row::after {
+  content: "";
+  position: absolute;
+  width: 30%;
+  height: 3px;
+  left: -30%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--flash-border) 22%,
+    var(--flash-border) 78%,
+    transparent 100%
+  );
+  animation: region-flash-row-sweep 1.5s ease-out 1 forwards;
+}
+.region-flash-row::before {
+  top: 0;
+}
+.region-flash-row::after {
+  bottom: 0;
+}
+/* col：左、右兩條長邊各一段較亮光帶（兩端 fade，中央不透明），由上掃至下 */
+.region-flash-col::before,
+.region-flash-col::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 30%;
+  top: -30%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--flash-border) 22%,
+    var(--flash-border) 78%,
+    transparent 100%
+  );
+  animation: region-flash-col-sweep 1.5s ease-out 1 forwards;
+}
+.region-flash-col::before {
+  left: 0;
+}
+.region-flash-col::after {
+  right: 0;
+}
+/* box 無掃描光帶：::before / ::after 未在 box 設尺寸/動畫，不會顯示，維持整體 3x3 正方形「半透明邊框」同時亮起淡出 */
+
+/* ===== 功能性 UI 色彩變數：讓彩色 UI 在 mono 主題切換為黑/灰/白深淺 ===== */
+:root {
+  --ui-hint: #f59e0b; /* 提示按鈕底色 */
+  --ui-hint-hover: #d97706;
+  --ui-check: #0ea5e9; /* 對答案按鈕底色 */
+  --ui-check-hover: #0284c7;
+  --ui-btn-ink: #ffffff; /* 按鈕文字色 */
+
+  --ui-selected-bg: #fef3c7; /* 選取格子底色 */
+  --ui-selected-ring: #f59e0b;
+  --ui-invalid-bg: #fee2e2; /* 衝突格子底色 */
+  --ui-invalid-ink: #dc2626;
+  --ui-invalid-ring: #ef4444;
+  --ui-dragover-bg: #e0e7ff; /* 拖曳高亮底色 */
+  --ui-dragover-ring: #818cf8;
+  --ui-highlight-bg: rgba(207, 250, 254, 0.7); /* 相同數字高亮 */
+  --ui-toggle-on: #4f46e5; /* 深色模式開關 ON */
+}
+.dark {
+  --ui-selected-bg: rgba(120, 53, 15, 0.5);
+  --ui-invalid-bg: rgba(127, 29, 29, 0.3);
+  --ui-invalid-ink: #f87171;
+  --ui-dragover-bg: rgba(49, 46, 129, 0.3);
+  --ui-highlight-bg: rgba(22, 78, 99, 0.5);
+}
+/* mono 主題：僅使用黑/灰/白深淺 */
+[data-accent="mono"] {
+  --ui-hint: #334155;
+  --ui-hint-hover: #1e293b;
+  --ui-check: #0f172a;
+  --ui-check-hover: #020617;
+  --ui-btn-ink: #ffffff;
+  --ui-selected-bg: #e2e8f0;
+  --ui-selected-ring: #475569;
+  --ui-invalid-bg: #cbd5e1;
+  --ui-invalid-ink: #0f172a;
+  --ui-invalid-ring: #334155;
+  --ui-dragover-bg: #e2e8f0;
+  --ui-dragover-ring: #64748b;
+  --ui-highlight-bg: rgba(203, 213, 225, 0.7);
+  --ui-toggle-on: #334155;
+}
+.dark[data-accent="mono"] {
+  --ui-hint: #cbd5e1;
+  --ui-hint-hover: #e2e8f0;
+  --ui-check: #e2e8f0;
+  --ui-check-hover: #f1f5f9;
+  --ui-btn-ink: #0f172a;
+  --ui-selected-bg: rgba(71, 85, 105, 0.5);
+  --ui-selected-ring: #94a3b8;
+  --ui-invalid-bg: rgba(51, 65, 85, 0.5);
+  --ui-invalid-ink: #f1f5f9;
+  --ui-invalid-ring: #ffffff;
+  --ui-dragover-bg: rgba(71, 85, 105, 0.3);
+  --ui-dragover-ring: #94a3b8;
+  --ui-highlight-bg: rgba(51, 65, 85, 0.5);
+  --ui-toggle-on: #94a3b8;
+}
+
+/* 功能性 UI class（顏色跟隨上方變數，mono 時自動轉灰階） */
+.ui-btn-hint {
+  background-color: var(--ui-hint);
+  color: var(--ui-btn-ink);
+}
+.ui-btn-hint:hover {
+  background-color: var(--ui-hint-hover);
+}
+.ui-btn-check {
+  background-color: var(--ui-check);
+  color: var(--ui-btn-ink);
+}
+.ui-btn-check:hover {
+  background-color: var(--ui-check-hover);
+}
+.ui-toggle-on {
+  background-color: var(--ui-toggle-on);
+}
+
+.cell-invalid {
+  background-color: var(--ui-invalid-bg);
+  color: var(--ui-invalid-ink);
+  --tw-ring-color: var(--ui-invalid-ring);
+}
+/* 題目固定格衝突 (Given + Invalid) */
+.cell-given-invalid {
+  color: #dc2626;
+  --tw-ring-color: #ef4444;
+}
+.dark .cell-given-invalid {
+  color: #f87171;
+  --tw-ring-color: #f87171;
+}
+
+/* mono 極簡主題下：不論亮色或深色模式，完全去彩色化 (純白/純黑/灰階) */
+[data-accent="mono"] .cell-given-invalid {
+  color: #0f172a;
+  --tw-ring-color: #ffffff;
+}
+.dark[data-accent="mono"] .cell-given-invalid {
+  color: #f1f5f9; /* 深色 Mono 模式下改為純白文字 */
+  --tw-ring-color: #94a3b8; /* 深色 Mono 模式下改為純白亮框 */
+}
+.cell-is-selected {
+  background-color: var(--ui-selected-bg);
+  --tw-ring-color: var(--ui-selected-ring);
+}
+.cell-dragover {
+  background-color: var(--ui-dragover-bg);
+  --tw-ring-color: var(--ui-dragover-ring);
+}
+.cell-highlight {
+  background-color: var(--ui-highlight-bg);
+}
+
+/* mono 主題：select 聚焦環也轉灰階，盡可能僅使用黑/灰/白 */
+[data-accent="mono"] select:focus {
+  --tw-ring-color: #475569 !important;
+}
+.dark[data-accent="mono"] select:focus {
+  --tw-ring-color: #94a3b8 !important;
+}
