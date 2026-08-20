@@ -77,7 +77,10 @@ export const Settings: React.FC<SettingsProps> = ({
     THEMES.find((theme) => theme.value === accent) ?? THEMES[0];
 
   return (
-    <div className="fixed bottom-15 left-3 z-40 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl p-4 text-slate-700 dark:text-slate-300">
+    <div
+      data-testid="settings-panel"
+      className="fixed z-[60] left-3 bottom-[calc(16rem+env(safe-area-inset-bottom))] md:bottom-15 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl shadow-2xl p-4 text-slate-700 dark:text-slate-300"
+    >
       {/* 設定選項：自動草稿 / 語言 / 深色模式 / 主題色彩 */}
       <div className="flex flex-col gap-3 mb-3 w-full">
         {/* 語言選單：各自一行，標題靠左、下拉選單靠右 */}

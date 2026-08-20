@@ -32,7 +32,15 @@ export default {
     instructions: {
       draft: "• 草稿數字：點擊格子後直接輸入 1-9",
       answer: "• 答案數字：拖曳右側數字至格子；點擊格子後點擊右側數字",
-      clear: "• 清除數字：右鍵格子",
+      clear: "• 清除數字：右鍵格子 或 鍵盤 Delete/Backspace",
+      mobileDraftAndAnswer: "• 草稿&答案：點格子後，根據下方草稿/答案模式（鉛筆切換模式），點擊數字盤",        
+      mobileClear: "• 清除：點格子後，點下方「橡皮擦」",
+    },
+    numpad: {
+      erase: "橡皮擦（清除格子）",
+      toggleDraft: "草稿模式開關",
+      mode: "答案模式",
+      draftOn: "草稿模式",
     },
     snackbar: {
       noEmptyCells: "沒有可用的空格了",

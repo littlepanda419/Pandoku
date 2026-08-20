@@ -18,8 +18,9 @@ src/
 ├── components/
 │   ├── BoardCell.tsx     # one 9×9 cell (drag-drop, context-menu, candidates)
 │   ├── BoardGrid.tsx     # grid + row/col/box completion-flash overlays
-│   ├── NumberPicker.tsx  # fixed right-side 1-9 draggable buttons
-│   ├── StatsPanel.tsx    # fixed top-left time + progress
+│   ├── NumberPicker.tsx  # fixed right-side 1-9 draggable buttons (desktop)
+│   ├── MobileNumpad.tsx  # fixed bottom virtual keypad + pencil draft toggle (mobile)
+│   ├── StatsPanel.tsx    # top time + progress (in-flow card, no overlap)
 │   ├── Toolbar.tsx       # difficulty select + New Game / Daily
 │   ├── ActionButtons.tsx # Hint / Check
 │   ├── Snackbar.tsx      # toast
@@ -68,7 +69,7 @@ Also exports `DIFFICULTY_VALUES` and `CompletionRegion`.
 
 ## 🎮 App.tsx — Orchestrator
 
-**State**: `boot` (from `initAppState(todayString())`), `game{board,puzzle}`, `selectedCell`, `difficulty`, `isDaily`, `dailyCompleted[]`, `autoDraft`, `accent`, `darkMode`, `settingsOpen`, `flashRegions[]`, `confirm`, `snackbar`, `elapsed`/`gameSolved`.
+**State**: `boot` (from `initAppState(todayString())`), `game{board,puzzle}`, `selectedCell`, `difficulty`, `isDaily`, `dailyCompleted[]`, `autoDraft`, `draftMode` (mobile keypad pencil toggle), `accent`, `darkMode`, `settingsOpen`, `flashRegions[]`, `confirm`, `snackbar`, `elapsed`/`gameSolved`.
 
 **Effects**:
 
@@ -80,9 +81,9 @@ Also exports `DIFFICULTY_VALUES` and `CompletionRegion`.
 - flash-detect/clear (`getCompletedRegions`), snackbar-timeout (2.5s)
 - keyboard (selected cell): `1-9` draft, `Delete`/`Backspace` clear, `Escape` deselect
 
-**Handlers**: `handleNewGame`, `startDaily`, `handleSelectCell`, `handleDropValue` (same value clears), `toggleCandidate` (empty only), `clearCell`, `handleToggleAutoDraft`, `handleHint`, `handleCheckAnswer` (success→clear save+daily 打卡+confetti), `handleRequestClear`, `requestNewGame`.
+**Handlers**: `handleNewGame`, `startDaily`, `handleSelectCell`, `handleDropValue` (same value clears), `toggleCandidate` (empty only), `clearCell`, `handleNumPadSelect` (draft → toggleCandidate, else drop value), `handleToggleAutoDraft`, `handleHint`, `handleCheckAnswer` (success→clear save+daily 打卡+confetti), `handleRequestClear`, `requestNewGame`.
 
-**Renders**: `StatsPanel` → `Toolbar` → `ActionButtons` → `BoardGrid` → instructions → `NumberPicker` → `Snackbar` → `SettingsButton`+`Settings` → `ConfirmDialog`.
+**Renders**: `StatsPanel` → `Toolbar` → `ActionButtons` → `BoardGrid` → instructions (responsive desktop/mobile) → `NumberPicker` (desktop only) + `MobileNumpad` (mobile only) → `Snackbar` → `SettingsButton`+`Settings` → `ConfirmDialog`.
 
 ## 🧱 Components
 

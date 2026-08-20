@@ -6,14 +6,14 @@ import App from "../App";
 // 不需再把開關關掉再開一次才看得到。（由 App.render 實際互動取得 ground truth）
 
 function openSettings(container: HTMLElement): HTMLElement {
-  // 左下角設定齒輪按鈕
+  // 設定齒輪按鈕
   const gear = container.querySelector(
-    ".fixed.bottom-3.left-3 button",
+    '[data-testid="settings-button"]',
   ) as HTMLElement;
   expect(gear).toBeTruthy();
   fireEvent.click(gear);
   const panel = container.querySelector(
-    ".fixed.bottom-15.left-3",
+    '[data-testid="settings-panel"]',
   ) as HTMLElement;
   expect(panel).toBeTruthy();
   return panel;
@@ -57,7 +57,7 @@ describe("自動草稿開新遊戲", () => {
 
     // 關閉設定面板（再點齒輪按鈕）
     const gear = container.querySelector(
-      ".fixed.bottom-3.left-3 button",
+      '[data-testid="settings-button"]',
     ) as HTMLElement;
     fireEvent.click(gear);
 

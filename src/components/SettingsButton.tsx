@@ -12,10 +12,11 @@ export const SettingsButton: React.FC<SettingsButtonProps> = ({
   onToggle,
 }) => {
   return (
-    <div className="fixed bottom-3 left-3 z-30">
+    <div className="fixed z-[50] left-3 bottom-[calc(13rem+env(safe-area-inset-bottom))] md:bottom-3">
       <button
         aria-label="Settings"
         aria-expanded={isOpen}
+        data-testid="settings-button"
         onClick={onToggle}
         className="w-10 h-10 flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl shadow-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
       >

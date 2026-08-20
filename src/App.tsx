@@ -24,6 +24,7 @@ import {
 import { formatTime, todayString } from "./utils/format";
 import { BoardGrid } from "./components/BoardGrid";
 import { NumberPicker } from "./components/NumberPicker";
+import { MobileNumpad } from "./components/MobileNumpad";
 import { Settings } from "./components/Settings";
 import { StatsPanel } from "./components/StatsPanel";
 import { Toolbar } from "./components/Toolbar";
@@ -59,6 +60,8 @@ export default function App() {
     single?: boolean;
   } | null>(null);
   const [autoDraft, setAutoDraft] = useState(false);
+  // 手機版底部虛擬鍵盤的「草稿/鉛筆模式」開關（預設關閉＝填正式答案）
+  const [draftMode, setDraftMode] = useState(false);
   const [snackbar, setSnackbar] = useState<string | null>(null);
 
   // ---- 計時器 ----
@@ -298,6 +301,19 @@ export default function App() {
     },
     [autoDraft, rebuildBoard],
   );
+  // 手機版底部虛擬鍵盤點選數字：
+  // 草稿模式開啟 → 切換該格草稿；關閉 → 填正式答案
+  const handleNumPadSelect = useCallback(
+    (num: number) => {
+      if (!selectedCell) return;
+      if (draftMode) {
+        toggleCandidate(selectedCell[0], selectedCell[1], num);
+      } else {
+        handleDropValue(selectedCell[0], selectedCell[1], num);
+      }
+    },
+    [selectedCell, draftMode, toggleCandidate, handleDropValue],
+  );
   // 切換自動草稿：開啟時為所有空格計算候選草稿，關閉時清除所有草稿
   const handleToggleAutoDraft = () => {
     const newOn = !autoDraft;
@@ -404,12 +420,12 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [selectedCell, toggleCandidate, clearCell, confirm]);
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex flex-col items-center p-4 md:pr-28">
+    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 flex flex-col items-center p-4 pb-48 md:pb-4 md:pr-28">
       <h1 className="text-3xl font-extrabold text-accent my-4">
         {isDaily ? t("app.titleDaily") : t("app.title")}
       </h1>
 
-      {/* 左上角統計資料（getProgress） */}
+      {/* 統計資料（getProgress）：置中內文卡片 */}
       <StatsPanel progress={stats.progress} elapsed={elapsed} />
 
       {/* 控制工具列：難度 + 新遊戲 + 每日挑戰 */}
@@ -437,15 +453,21 @@ export default function App() {
         onClickCell={handleSelectCell}
         onRequestClear={handleRequestClear}
       />
-      {/* 操作提示 */}
+      {/* 操作提示：桌面版／手機版分開說明 */}
       <div className="w-full max-w-[min(92vw,26rem)] mt-3 text-center text-xs text-slate-500 dark:text-slate-400 space-y-1">
-        <p>{t("instructions.draft")}</p>
-        <p>{t("instructions.answer")}</p>
-        <p>{t("instructions.clear")}</p>
+        <div className="md:hidden">
+          <p>{t("instructions.mobileDraftAndAnswer")}</p>
+          <p>{t("instructions.mobileClear")}</p>
+        </div>
+        <div className="hidden md:block">
+          <p>{t("instructions.draft")}</p>
+          <p>{t("instructions.answer")}</p>
+          <p>{t("instructions.clear")}</p>
+        </div>
       </div>
 
-      {/* 數字選擇器：固定於畫面右側中央 */}
-      <div className="fixed right-3 top-1/2 -translate-y-1/2 z-30">
+      {/* 數字選擇器：桌面版固定於右側中央（手機版隱藏，改用下方虛擬鍵盤） */}
+      <div className="hidden md:block fixed right-3 top-1/2 -translate-y-1/2 z-30">
         <NumberPicker
           onSelectNumber={(num) => {
             if (selectedCell) {
@@ -454,6 +476,16 @@ export default function App() {
           }}
         />
       </div>
+
+      {/* 手機版：底部固定虛擬數字鍵盤（含鉛筆草稿開關 + 橡皮擦） */}
+      <MobileNumpad
+        draftMode={draftMode}
+        onToggleDraft={() => setDraftMode((d) => !d)}
+        onSelectNumber={handleNumPadSelect}
+        onErase={() => {
+          if (selectedCell) clearCell(selectedCell[0], selectedCell[1]);
+        }}
+      />
 
       {/* 提示訊息 (snackbar) */}
       <Snackbar message={snackbar} />

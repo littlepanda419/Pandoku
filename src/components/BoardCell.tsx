@@ -66,7 +66,7 @@ export const BoardCell: React.FC<BoardCellProps> = ({
     if (cell.isGiven)
       return "bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold cursor-not-allowed";
     if (isDragOver) return "cell-dragover ring-2 ring-inset";
-    if (isSelected) return "cell-is-selected ring-2 ring-inset";
+    if (isSelected) return "cell-is-selected ring-2 ring-inset text-accent";
     return "bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-accent font-semibold";
   };
 

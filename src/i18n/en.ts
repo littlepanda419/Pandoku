@@ -32,8 +32,17 @@ export default {
     instructions: {
       draft: "• Draft numbers: click a cell, then type 1-9",
       answer:
-        "• Answer numbers: drag a number from the right, or click a cell then a number",
-      clear: "• Clear a cell: right-click it",
+        "• Answer numbers: drag from the right side, or click a cell then a number",
+      clear: "• Clear a cell: right-click it, or press Delete/Backspace",
+      mobileDraftAndAnswer:
+        "• Draft & Answer: tap a cell, then tap a number below per the draft/answer mode (pencil toggle)",
+      mobileClear: "• Clear: tap a cell, then tap the eraser below",
+    },
+    numpad: {
+      erase: "Eraser (clear cell)",
+      toggleDraft: "Draft mode toggle",
+      mode: "Answer Mode",
+      draftOn: "Draft Mode",
     },
     snackbar: {
       noEmptyCells: "No empty cells left",
